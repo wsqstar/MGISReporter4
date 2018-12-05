@@ -209,9 +209,6 @@ public class MainActivity extends AppCompatActivity {
 //结束菜单栏目的设置以及功能管理
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-
     //实现地图生命周期管理
     @Override
     protected void onResume() {
