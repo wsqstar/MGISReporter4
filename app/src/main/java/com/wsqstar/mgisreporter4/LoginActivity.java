@@ -13,6 +13,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText email_login_text;//1 定义两个变量
     private EditText pws_login_text;
+//    private String pws_add = "ceshi";//相加一个混淆
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
                     //下面两行是显式Intent，用于跳转
                     Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                     startActivity(intent);
+                    finish();
                 }else {
                     Toast.makeText(LoginActivity.this,"鉴权失败",
                             Toast.LENGTH_SHORT).show();

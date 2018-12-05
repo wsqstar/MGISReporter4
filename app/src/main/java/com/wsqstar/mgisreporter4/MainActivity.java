@@ -18,8 +18,10 @@ import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 
 //首先是 布局界面并显示百度地图
@@ -90,6 +92,22 @@ public class MainActivity extends AppCompatActivity {
         );
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);//从GPS获取最新的定位信息
         locationUpdates(location);//将最新的定位信息 传递 给location//这样就可以获取定位信息了
+
+
+//        //定义Maker坐标点
+//        LatLng point = new LatLng(39.963175, 116.400244);
+//
+//        //构建Marker图标
+//        BitmapDescriptor bitmap = BitmapDescriptorFactory.fromResource(R.drawable.ic_icon_geo);
+//
+//        //构建MarkerOption，用于在地图上添加Marker
+//        OverlayOptions option = new MarkerOptions()
+//                .position(point)
+//                .icon(bitmap);
+//
+//        //在地图上添加Marker，并显示
+//        mBaiduMap.addOverlay(option);
+
     }
 
     //字符信息
@@ -114,10 +132,19 @@ public class MainActivity extends AppCompatActivity {
             .longitude(location.getLongitude())//设置经度坐标
             .build();
             mBaiduMap.setMyLocationData(locData);//设置定位数据
+
+
             BitmapDescriptor bitmapDescriptor= BitmapDescriptorFactory.fromResource(R.drawable.ic_icon_geo);//设置自定义定位图标
             locationMode=MyLocationConfiguration.LocationMode.NORMAL;//设置定位模式//locationMode是一个全局变量
             MyLocationConfiguration config=new MyLocationConfiguration(locationMode,true,bitmapDescriptor);//设置构造方式//有三个参数，定位模式，true，自定义的图标
             mBaiduMap.setMyLocationConfiguration(config);//显示定位图标
+
+            //baidu lbs 范例 http://lbsyun.baidu.com/index.php?title=androidsdk/guide/create-map/location
+//            // 设置定位图层的配置（定位模式，是否允许方向信息，用户自定义定位图标）
+//            BitmapDescriptor mCurrentMarker = BitmapDescriptorFactory
+//                    .fromResource(R.drawable.ic_icon_geo);
+//            MyLocationConfiguration config = new MyLocationConfiguration(mCurrentMode, true, mCurrentMarker);
+//            mBaiduMap.setMyLocationConfiguration();
 
         }else { //否则输出空信息
             Log.i("Location","没有获取到GPS信息");
