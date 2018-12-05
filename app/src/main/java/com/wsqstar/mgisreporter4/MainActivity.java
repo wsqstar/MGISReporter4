@@ -6,9 +6,11 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 //import android.view.WindowManager;
 //import android.widget.TextView;
 import com.baidu.mapapi.SDKInitializer;
@@ -23,6 +25,9 @@ import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
+
+import java.util.ArrayList;
+import java.util.List;
 
 //首先是 布局界面并显示百度地图
 //然后 实时获取定位信息中的经度和纬度
@@ -57,6 +62,25 @@ public class MainActivity extends AppCompatActivity {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+
+
+        List<String> permissionList = new ArrayList<>();
+        if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+        if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_PHONE_STATE)!= PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.READ_PHONE_STATE);
+        }
+        if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if(!permissionList.isEmpty()){
+            String[] permissions = permissionList.toArray(new String[permissionList.size()]);
+            ActivityCompat.requestPermissions(MainActivity.this,permissions,1);
+        }else {
+//            requestLocation();
             return;
         }
 //        locationManager.getProvider(LocationManager.GPS_PROVIDER);//huoqu
@@ -135,8 +159,8 @@ public class MainActivity extends AppCompatActivity {
 
 
             BitmapDescriptor bitmapDescriptor= BitmapDescriptorFactory.fromResource(R.drawable.ic_icon_geo);//设置自定义定位图标
-            locationMode=MyLocationConfiguration.LocationMode.NORMAL;//设置定位模式//locationMode是一个全局变量
-            MyLocationConfiguration config=new MyLocationConfiguration(locationMode,true,bitmapDescriptor);//设置构造方式//有三个参数，定位模式，true，自定义的图标
+            locationMode = MyLocationConfiguration.LocationMode.NORMAL;//设置定位模式//locationMode是一个全局变量
+            MyLocationConfiguration config = new MyLocationConfiguration(locationMode,true,bitmapDescriptor);//设置构造方式//有三个参数，定位模式，true，自定义的图标
             mBaiduMap.setMyLocationConfiguration(config);//显示定位图标
 
             //baidu lbs 范例 http://lbsyun.baidu.com/index.php?title=androidsdk/guide/create-map/location
@@ -168,8 +192,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
-        mMapView.onDestroy();
         mMapView=null;
+        mMapView.onDestroy();
+
     }
     @Override
     protected void onStart() {
@@ -182,4 +207,9 @@ public class MainActivity extends AppCompatActivity {
         //在activity执行onStop时执行mMapView. onStop ()，实现地图生命周期管理
         mBaiduMap.setMyLocationEnabled(false);//停止定位图层
     }
+//    @Override
+//    Button mButton_report=(Button)findViewById(R.id.frame_button_report);
+
+
+
 }
