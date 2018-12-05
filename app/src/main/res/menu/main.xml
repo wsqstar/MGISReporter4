@@ -6,4 +6,10 @@
     <item
         android:id="@+id/remove_item_normal"
         android:title="change to NORMAL"/>
+    <item
+        android:id="@+id/item_traffic"
+        android:title="change to TRAFFIC"/>
+    <item
+        android:id="@+id/item_heat"
+        android:title="change to HEAT"/>
 </menu>

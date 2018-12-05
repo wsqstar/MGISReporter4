@@ -28,6 +28,11 @@ import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.poi.OnGetPoiSearchResultListener;
+import com.baidu.mapapi.search.poi.PoiDetailResult;
+import com.baidu.mapapi.search.poi.PoiDetailSearchResult;
+import com.baidu.mapapi.search.poi.PoiResult;
+import com.baidu.mapapi.search.poi.PoiSearch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -202,12 +207,54 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this,"You clicked Normal,返回正常地图", Toast.LENGTH_SHORT).show();
                 mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
                 break;
+            case R.id.item_traffic:
+                Toast.makeText(this,"You clicked Traffic,前往交通路况地图", Toast.LENGTH_SHORT).show();
+                mBaiduMap.setTrafficEnabled(true);
+                mBaiduMap.setBaiduHeatMapEnabled(false);
+                break;
+            case R.id.item_heat:
+                Toast.makeText(this,"You clicked Heat,前往热力地图", Toast.LENGTH_SHORT).show();
+                mBaiduMap.setBaiduHeatMapEnabled(true);
+                mBaiduMap.setTrafficEnabled(false);
+                break;
+
             default:
         }
         return true;
     }
 //结束菜单栏目的设置以及功能管理
 //////////////////////////////////////////////////////////////////////////////////////////////
+
+//    //POI
+//
+////创建POI检索实例
+//    mPoiSearch = PoiSearch.newInstance();
+//
+//    //创建POI检索监听者；
+//    OnGetPoiSearchResultListener poiListener = new OnGetPoiSearchResultListener(){
+//
+//        public void onGetPoiResult(PoiResult result){
+//            //获取POI检索结果
+//        }
+//
+//        public void onGetPoiDetailResult(PoiDetailSearchResult result){//V5.2.0版本版本起支持多个UID检索，即：mUids字段检索，废弃该接口 使用onGetPoiDetailResult(PoiDetailSearchResult)代替void onGetPoiDetailResult(PoiDetailResult result)
+//
+//            //获取Place详情页检索结果
+//        }
+//    };
+//
+////设置POI检索监听者；
+//    mPoiSearch.setOnGetPoiSearchResultListener(poiListener);
+//
+//    //发起检索请求
+//    mPoiSearch.searchInCity((new PoiCitySearchOption())
+//            .city(“北京”)
+//    .keyword(“美食”)
+//    .pageNum(10));
+//
+//    mPoiSearch.destroy();
+//
+//    //POI模块结束
 
     //实现地图生命周期管理
     @Override
