@@ -10,7 +10,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.Toast;
 //import android.view.WindowManager;
 //import android.widget.TextView;
 import com.baidu.mapapi.SDKInitializer;
@@ -51,8 +54,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mMapView = findViewById(R.id.bmapView);//获取地图组件
         mBaiduMap = mMapView.getMap();//获取百度地图对象
+
         //获取系统的LocationManager对象
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        //////////////////////////////////////////////////////////////////////////////////////////////
+        //以下是权限检查 最好是先别动了 因为 不知道原因与结构 但是现在还是可以使用的 只需要打开设置，打开定位权限即可
         //添加权限检查
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -64,8 +71,6 @@ public class MainActivity extends AppCompatActivity {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-
-
         List<String> permissionList = new ArrayList<>();
         if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
             permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
@@ -83,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
 //            requestLocation();
             return;
         }
+        //权限检查完毕
+        ////////////////////////////////////////////////////////////////////////////////
 //        locationManager.getProvider(LocationManager.GPS_PROVIDER);//huoqu
 //        textView//文本显示location provider
 
@@ -174,6 +181,33 @@ public class MainActivity extends AppCompatActivity {
             Log.i("Location","没有获取到GPS信息");
         }
     }
+////////////////////////////////////////////////////////////////////////////////////////////////
+//菜单栏目的设置
+    @Override
+    //首先是使用getMenuInflater（）方法获取到MenuInflater对象
+    //然后调用它？的inflate（）方法创建当前活动菜单
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main,menu);//inflate（）方法接受两个参数，第一个用于指定我们通过哪一个资源文件来创建菜单，这里传入R.menu.main,第二个参数用于指定我们的菜单项目将要添加到哪一个Menu对象中
+        return true;
+    }
+    //定义菜单相应事件，与上面的onCreateOptionsMenu(Menu menu) 互相配合
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.add_item_state:
+                Toast.makeText(this,"You clicked Statelite，给你看看卫星图层", Toast.LENGTH_SHORT).show();
+                //显示卫星图层
+                mBaiduMap.setMapType(BaiduMap.MAP_TYPE_SATELLITE);
+                break;
+            case R.id.remove_item_normal:
+                Toast.makeText(this,"You clicked Normal,返回正常地图", Toast.LENGTH_SHORT).show();
+                mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
+                break;
+            default:
+        }
+        return true;
+    }
+//结束菜单栏目的设置以及功能管理
+//////////////////////////////////////////////////////////////////////////////////////////////
 
     //实现地图生命周期管理
     @Override
