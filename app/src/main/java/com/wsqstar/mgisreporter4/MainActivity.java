@@ -23,6 +23,7 @@ import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
@@ -56,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN);//设置全屏显示
         //textView = (TextView) findViewById(R.id.provider);
         SDKInitializer.initialize(getApplicationContext());//初始化地图SDK//放置在setContentView之前
+
+
+
         setContentView(R.layout.activity_main);
         mMapView = findViewById(R.id.bmapView);//获取地图组件
         mBaiduMap = mMapView.getMap();//获取百度地图对象
@@ -63,8 +67,22 @@ public class MainActivity extends AppCompatActivity {
         //获取系统的LocationManager对象
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+
+//        locationManager.getProvider(LocationManager.GPS_PROVIDER);//huoqu
+//        textView//文本显示location provider
+
         //////////////////////////////////////////////////////////////////////////////////////////////
         //以下是权限检查 最好是先别动了 因为 不知道原因与结构 但是现在还是可以使用的 只需要打开设置，打开定位权限即可
+//        在Android 6.0之后，Android系统增加了动态权限授予的控制，定位权限需用户确认后，App才能拿到如基站、WIFI等信息，从而实现定位。
+//
+//        在Android系统升级到7.0之后，我们发现，即使用户授予了App定位权限，App依然存在无法定位成功的问题。追查原因为：
+// 授予权限与初始化位置相关类之间存在时续逻辑问题，即如果先初始化如WifiManager、TelephonyManager，再请求确认定位权限，
+// 则即使用户确认可以授予App定位权限，App后续仍然拿不到基站、WIFI等信息，从而无法定位；反之，则可以在授予权限之后正常使用定位。
+//
+//        针对这个情况，定位SDK自v7.2版本起，新增加了重启接口，LocationClient.reStart()，您可以在用户确认授予App定位权限之后，
+// 调用该接口，定位SDK将会进行重新初始化的操作，从而规避上述问题。您如果存在长时间后台定位的需求，
+// 推荐在应用回到前台的时候调用一次该接口，我们了解到有些手机系统会回收长时间后台获取用户位置的位置权限。
+// http://lbsyun.baidu.com/index.php?title=android-locsdk/guide/addition-func/android7-notice
         //添加权限检查
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -90,13 +108,13 @@ public class MainActivity extends AppCompatActivity {
             String[] permissions = permissionList.toArray(new String[permissionList.size()]);
             ActivityCompat.requestPermissions(MainActivity.this,permissions,1);
         }else {
-//            requestLocation();
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);//从GPS获取最新的定位信息
+            locationUpdates(location);//将最新的定位信息 传递 给location//这样就可以获取定位信息了
             return;
         }
         //权限检查完毕
         ////////////////////////////////////////////////////////////////////////////////
-//        locationManager.getProvider(LocationManager.GPS_PROVIDER);//huoqu
-//        textView//文本显示location provider
+
 
         //注册一个监听器
         locationManager.requestLocationUpdates(
@@ -149,18 +167,18 @@ public class MainActivity extends AppCompatActivity {
     //字符信息
     public void locationUpdates(Location location){//获取指定的查询信息
         if(location!=null){
-//            StringBuilder stringBuilder=new StringBuilder();//创建一个字符串构建器，用于记录定位信息
-//            stringBuilder.append("your location is: \n");
-//            stringBuilder.append("经度：");
-//            stringBuilder.append(location.getAltitude());
-//            text.setText(stringBuilder.toString());//显示到页面上
-            LatLng ll = new LatLng(location.getLatitude(),location.getLongitude());//获取用户当前经纬度
-            Log.i("Location","纬度："+location.getLatitude()+"| 经度："+location.getLongitude());//通过日志输出经纬度的值
-            if(isFirstLoc){
-                MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(ll);//更新坐标位置
-                mBaiduMap.animateMapStatus(u);//设置地图位置
-                isFirstLoc=false;//取消第一次定位
-            }
+////            StringBuilder stringBuilder=new StringBuilder();//创建一个字符串构建器，用于记录定位信息
+////            stringBuilder.append("your location is: \n");
+////            stringBuilder.append("经度：");
+////            stringBuilder.append(location.getAltitude());
+////            text.setText(stringBuilder.toString());//显示到页面上
+//            LatLng ll = new LatLng(location.getLatitude(),location.getLongitude());//获取用户当前经纬度
+//            Log.i("Location","纬度："+location.getLatitude()+"| 经度："+location.getLongitude());//通过日志输出经纬度的值
+//            if(isFirstLoc){
+//                MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(ll);//更新坐标位置
+//                mBaiduMap.animateMapStatus(u);//设置地图位置
+//                isFirstLoc=false;//取消第一次定位
+//            }
             //构造定位数据//方向 纬度 经度
             MyLocationData locData=new MyLocationData.Builder().accuracy(location.getAccuracy())//accuray设置经度
                     .direction(100)//设置方向信息
@@ -169,11 +187,22 @@ public class MainActivity extends AppCompatActivity {
             .build();
             mBaiduMap.setMyLocationData(locData);//设置定位数据
 
+            // 设置定位图层的配置（定位模式，是否允许方向信息，用户自定义定位图标） //本文中mCurrentMarker
+            BitmapDescriptor mCurrentMarker = BitmapDescriptorFactory.fromResource(R.drawable.ic_icon_geo);//设置自定义定位图标
+            locationMode = MyLocationConfiguration.LocationMode.COMPASS;//设置定位模式//locationMode是一个全局变量
+            //备选项
+//            mCurrentMode = MyLocationConfiguration.LocationMode.FOLLOWING;//定位跟随态
+//            mCurrentMode = LocationMode.NORMAL;   //默认为 LocationMode.NORMAL 普通态
+//            mCurrentMode = LocationMode.COMPASS;  //定位罗盘态
 
-            BitmapDescriptor bitmapDescriptor= BitmapDescriptorFactory.fromResource(R.drawable.ic_icon_geo);//设置自定义定位图标
-            locationMode = MyLocationConfiguration.LocationMode.NORMAL;//设置定位模式//locationMode是一个全局变量
-            MyLocationConfiguration config = new MyLocationConfiguration(locationMode,true,bitmapDescriptor);//设置构造方式//有三个参数，定位模式，true，自定义的图标
+            //设置自定义图标模式
+//            mBaiduMap.setMyLocationConfiguration(new MyLocationConfiguration(
+//                    locationMode, true, mCurrentMarker,
+//                    accuracyCircleFillColor, accuracyCircleStrokeColor));
+            MyLocationConfiguration config = new MyLocationConfiguration(locationMode,true, mCurrentMarker);//设置构造方式//有三个参数，定位模式，true，自定义的图标
             mBaiduMap.setMyLocationConfiguration(config);//显示定位图标
+
+
 
             //baidu lbs 范例 http://lbsyun.baidu.com/index.php?title=androidsdk/guide/create-map/location
 //            // 设置定位图层的配置（定位模式，是否允许方向信息，用户自定义定位图标）
