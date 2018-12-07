@@ -12,4 +12,7 @@
     <item
         android:id="@+id/item_heat"
         android:title="change to HEAT"/>
+    <item
+        android:id="@+id/poi_search"
+        android:title="POI search"/>
 </menu>
