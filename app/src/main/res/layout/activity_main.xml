@@ -1,73 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+    <!--    定义界面的标题栏和标题栏以下内容的布局
+                此处使用<include>标签引入标题栏，且下方有定义一个空的FrameLayout的布局。  -->
+   <!-- <include layout="@layout/layout_title"></include>-->
 
-    <com.baidu.mapapi.map.MapView
-        android:id="@+id/bmapView"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:clickable="true" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="80dip"
-        android:background="#D000"
-        android:minWidth="100dip"
-        android:orientation="vertical"
-        android:padding="2dp" >
+        <com.baidu.mapapi.map.MapView
+            android:id="@+id/bmapView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:clickable="true" />
 
-        <RadioGroup
-            android:id="@+id/radioGroup"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="定位icon" >
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="80dip"
+            android:background="#D000"
+            android:minWidth="100dip"
+            android:orientation="vertical"
+            android:padding="2dp" >
 
-            <RadioButton
-                android:id="@+id/defaulticon"
+            <Button
+                android:id="@+id/button1_changeLocModeM"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="默认图标" >
-            </RadioButton>
+                android:layout_marginTop="10dip" />
 
-            <RadioButton
-                android:id="@+id/customicon"
+            <RadioGroup
+                android:id="@+id/radioGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="自定义图标" >
-            </RadioButton>
-        </RadioGroup>
-    </LinearLayout>
+                android:contentDescription="定位icon" >
 
-    <Button
-        android:id="@+id/button1_changeLocModeM"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="25dp"
-        android:layout_marginTop="10dip" />
+                <RadioButton
+                    android:id="@+id/defaulticon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="默认图标" >
+                </RadioButton>
+
+                <RadioButton
+                    android:id="@+id/customicon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="自定义图标" >
+                </RadioButton>
+            </RadioGroup>
+        </LinearLayout>
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center|bottom">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|bottom">
 
-        <Button
-            android:id="@+id/frame_button_report"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Report 汇报"/>
-        <Button
-            android:id="@+id/frame_button_check"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Check 检查"
-            />
-    </LinearLayout>
+            <Button
+                android:id="@+id/frame_button_report"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Report 汇报"/>
+            <Button
+                android:id="@+id/frame_button_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Check 检查"
+                />
+        </LinearLayout>
+
 
 </RelativeLayout>

@@ -8,22 +8,14 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.ActivityCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.Toast;
-//import android.view.WindowManager;
-//import android.widget.TextView;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
@@ -33,29 +25,19 @@ import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapStatus;
-import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.map.Marker;
-import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
-import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.search.poi.OnGetPoiSearchResultListener;
-import com.baidu.mapapi.search.poi.PoiDetailResult;
-import com.baidu.mapapi.search.poi.PoiDetailSearchResult;
-import com.baidu.mapapi.search.poi.PoiResult;
-import com.baidu.mapapi.search.poi.PoiSearch;
-
-import java.util.ArrayList;
-import java.util.List;
-
 
 //首先是 布局界面并显示百度地图
 //然后 实时获取定位信息中的经度和纬度
 //最后 启用定位功能标记我的位置
 public class MainActivity extends Activity implements SensorEventListener {
+
+
+
 
     // 定位相关
     LocationClient mLocClient;
@@ -93,6 +75,11 @@ public class MainActivity extends Activity implements SensorEventListener {
         SDKInitializer.initialize(getApplicationContext());//初始化地图SDK//放置在setContentView之前//demo里面好像没有？
 
         setContentView(R.layout.activity_main);
+
+//        setTitle("标题栏");
+//        showBackwardView(R.string.text_back,true);
+//        showForwardView(R.string.text_forward,true);
+
         requestLocButton = (Button) findViewById(R.id.button1_changeLocModeM);
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);//获取传感器管理服务//Demo
         mCurrentMode = MyLocationConfiguration.LocationMode.NORMAL;//设置当前的定位模式
@@ -134,7 +121,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         requestLocButton.setOnClickListener(btnClickListener);
         //
 
-        //接下来是获取图标格式的代码
+        //接下来的代码修改图标格式
         RadioGroup group = (RadioGroup) this.findViewById(R.id.radioGroup);
         radioButtonListener = new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -160,7 +147,6 @@ public class MainActivity extends Activity implements SensorEventListener {
         //
 
         //地图初始化//demo
-        // mMapView = (MapView) findViewById(R.id.bmapView);
         mMapView = findViewById(R.id.bmapView);//获取地图组件
         mBaiduMap = mMapView.getMap();//获取百度地图对象
         //开启定位图层
@@ -202,7 +188,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 //// 调用该接口，定位SDK将会进行重新初始化的操作，从而规避上述问题。您如果存在长时间后台定位的需求，
 //// 推荐在应用回到前台的时候调用一次该接口，我们了解到有些手机系统会回收长时间后台获取用户位置的位置权限。
 //// http://lbsyun.baidu.com/index.php?title=android-locsdk/guide/addition-func/android7-notice
-//        //添加权限检查
+        //添加权限检查
 //        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 //            // TODO: Consider calling
 //            //    ActivityCompat#requestPermissions
@@ -309,7 +295,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
             @Override
             public void onReceiveLocation(BDLocation location) {
-                // map view 销毁后不在处理新接收的位置
+                // map view 销毁后不再处理新接收的位置
                 if (location == null || mMapView == null) {
                     return;
                 }
