@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.wsqstar.mgisreporter4.MainActivity">
+    android:layout_height="match_parent" >
 
     <com.baidu.mapapi.map.MapView
         android:id="@+id/bmapView"
@@ -13,11 +9,6 @@
         android:layout_height="fill_parent"
         android:clickable="true" />
 
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-<!-- 感觉下面的都没啥意思 因为更加喜欢使用原生的UI-->
-    <!-- 被注释掉的是关于定位图标的选择的那啥
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -50,31 +41,9 @@
             </RadioButton>
         </RadioGroup>
     </LinearLayout>
-    -->
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center|bottom">
-
-        <Button
-            android:id="@+id/frame_button_report"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Report 汇报"/>
-        <Button
-            android:id="@+id/frame_button_check"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Check 检查"
-            />
-
-    </LinearLayout>
-
 
     <Button
-        android:id="@+id/button1_changeLocMode"
+        android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -82,10 +51,4 @@
         android:layout_marginRight="25dp"
         android:layout_marginTop="10dip" />
 
-</FrameLayout>
-
-<!--注意 没有实现目标 没有实现文件 没有实现textview 没有实现计算-->
-
 </RelativeLayout>
-
-

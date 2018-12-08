@@ -1,6 +1,7 @@
 package com.wsqstar.mgisreporter4;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -246,6 +247,10 @@ public class MainActivity extends AppCompatActivity {
                 mBaiduMap.setBaiduHeatMapEnabled(true);
                 mBaiduMap.setTrafficEnabled(false);
                 break;
+            case R.id.Jump2LocDemo:
+                Toast.makeText(this,"You clicked LocDemo,前往定位地图", Toast.LENGTH_SHORT).show();
+                Intent intent_loc = new Intent(MainActivity.this,LocationDemo.class);
+                startActivity(intent_loc);
 
             default:
         }
@@ -321,7 +326,5 @@ public class MainActivity extends AppCompatActivity {
     }
 //    @Override
 //    Button mButton_report=(Button)findViewById(R.id.frame_button_report);
-
-
 
 }

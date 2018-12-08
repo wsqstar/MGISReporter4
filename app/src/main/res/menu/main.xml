@@ -15,4 +15,7 @@
     <item
         android:id="@+id/poi_search"
         android:title="POI search"/>
+    <item
+        android:id="@+id/Jump2LocDemo"
+        android:title="LocDemo"/>
 </menu>
