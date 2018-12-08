@@ -43,7 +43,10 @@
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="TavevzRC9E4F0SwjrYHH08ZkFElv9h73" /> <!-- http://lbsyun.baidu.com/apiconsole/key -->
 
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity"
+            android:theme="@style/AppTheme">
+        </activity>
+        <!-- 程序入口 -->
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -51,7 +54,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LocationDemo" />
+
+        <activity android:name=".LocationDemo" >
+
+        </activity>
         <!--<activity android:name=".TitleActivity"></activity>-->
     </application>
 

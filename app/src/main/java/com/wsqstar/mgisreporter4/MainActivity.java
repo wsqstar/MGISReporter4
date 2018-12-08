@@ -10,9 +10,11 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -34,7 +36,7 @@ import com.baidu.mapapi.model.LatLng;
 //首先是 布局界面并显示百度地图
 //然后 实时获取定位信息中的经度和纬度
 //最后 启用定位功能标记我的位置
-public class MainActivity extends Activity implements SensorEventListener {
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
 
 
@@ -69,8 +71,9 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                WindowManager.LayoutParams.FLAG_FULLSCREEN);//设置全屏显示
+        //设置全屏显示
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);//设置全屏显示
         //textView = (TextView) findViewById(R.id.provider);
         SDKInitializer.initialize(getApplicationContext());//初始化地图SDK//放置在setContentView之前//demo里面好像没有？
 
