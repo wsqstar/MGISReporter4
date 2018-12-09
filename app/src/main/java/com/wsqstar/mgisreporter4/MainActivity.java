@@ -1,6 +1,7 @@
 package com.wsqstar.mgisreporter4;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -24,11 +25,17 @@ import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapStatus;
+import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 //首先是 布局界面并显示百度地图
 //然后 实时获取定位信息中的经度和纬度
@@ -52,11 +59,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private double mCurrentLon = 0.0;
     private float mCurrentAccracy;
 
+
     private MapView mMapView;//声明地图组件
     private BaiduMap mBaiduMap;//定义百度地图对象
 
+    ///////////////////////////////////
+    //来自个性化地图DEMO//BaseMapDemo
+    private boolean mEnableCustomStyle = true;
+    private static final int OPEN_ID = 0;
+    private static final int CLOSE_ID = 1;
+    //用于设置个性化地图的样式文件
+    // 精简为1套样式模板:
+    // "custom_config_dark.json"
+    private static String PATH = "custom_config_dark.json";
+    private static int icon_themeId = 1;
+    //个性化地图DEMO模块结束
+    ///////////////////////////////////
+
+
     //UI相关
     RadioGroup.OnCheckedChangeListener radioButtonListener;
+    RadioGroup.OnCheckedChangeListener radioButtonListener2;
     Button requestLocButton;
     //    private TextView textView;//定义用于显示LocationProvider名称的TextView组件
 //    private TextView text;
@@ -68,13 +91,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         //设置全屏显示
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);//设置全屏显示
+
         //textView = (TextView) findViewById(R.id.provider);
         SDKInitializer.initialize(getApplicationContext());//初始化地图SDK//放置在setContentView之前//demo里面好像没有？
 
         setContentView(R.layout.activity_main);
+
+        MapView.setMapCustomEnable(true);
 
 //        setTitle("标题栏");
 //        showBackwardView(R.string.text_back,true);
@@ -145,6 +172,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         };
         group.setOnCheckedChangeListener(radioButtonListener);
         //
+
+        //这一小段代码更改个性化地图
+
+
+        RadioGroup group_custom_map = (RadioGroup) this.findViewById(R.id.radioGroup2);
+        radioButtonListener2 = new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group_custom_map, int checkedId) {
+                if (checkedId == R.id.default_map) {
+                    MapView.setMapCustomEnable(true);
+                    mBaiduMap.setCustomTrafficColor("#ffbb0101", "#fff33131", "#ffff9e19", "#00000000");
+                    MapStatusUpdate u = MapStatusUpdateFactory.zoomTo(13);
+                    mBaiduMap.animateMapStatus(u);
+                } else if (checkedId == R.id.custom_map) {
+                    MapView.setMapCustomEnable(false);
+
+                }
+            }
+        };
+        group_custom_map.setOnCheckedChangeListener(radioButtonListener2);
+
+
 
         //地图初始化//demo
         mMapView = findViewById(R.id.bmapView);//获取地图组件
@@ -373,6 +422,66 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //            Log.i("Location", "没有获取到GPS信息");
 //        }
 //    }
+
+
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //个性化地图相关代码//BaseMapDemo
+    // 设置个性化地图config文件路径
+    private void setMapCustomFile(Context context, String PATH) {
+        FileOutputStream out = null;
+        InputStream inputStream = null;
+        String moduleName = null;
+        try {
+            inputStream = context.getAssets()
+                    .open("customConfigdir/" + PATH);
+            byte[] b = new byte[inputStream.available()];
+            inputStream.read(b);
+
+            moduleName = context.getFilesDir().getAbsolutePath();
+            File f = new File(moduleName + "/" + PATH);
+            if (f.exists()) {
+                f.delete();
+            }
+            f.createNewFile();
+            out = new FileOutputStream(f);
+            out.write(b);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        MapView.setCustomMapStylePath(moduleName + "/" + PATH);
+        MapView.setMapCustomEnable(true);
+
+    }
+
+    /**
+     * 设置个性化icon
+     *
+     * @param context
+     * @param icon_themeId
+     */
+    private void setIconCustom(Context context, int icon_themeId){
+
+        MapView.setIconCustom(icon_themeId);
+    }
+    //个性化地图相关代码结束
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 //菜单栏目的设置

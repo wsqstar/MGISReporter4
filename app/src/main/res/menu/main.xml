@@ -12,9 +12,10 @@
     <item
         android:id="@+id/item_heat"
         android:title="change to HEAT"/>
-    <item
-        android:id="@+id/poi_search"
-        android:title="POI search"/>
+    <!--原先想要直接Fragment来着，暂时没有做。20181209-->
+    <!--<item-->
+        <!--android:id="@+id/poi_search"-->
+        <!--android:title="POI search"/>-->
     <item
         android:id="@+id/Jump2LocDemo"
         android:title="LocDemo"/>

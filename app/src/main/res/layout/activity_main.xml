@@ -50,6 +50,27 @@
                     android:text="自定义图标" >
                 </RadioButton>
             </RadioGroup>
+            <RadioGroup
+                android:id="@+id/radioGroup2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="icon" >
+
+                <RadioButton
+                    android:id="@+id/default_map"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="默认地图" >
+                </RadioButton>
+
+                <RadioButton
+                    android:id="@+id/custom_map"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="个性化地图" >
+                </RadioButton>
+            </RadioGroup>
         </LinearLayout>
 
 
