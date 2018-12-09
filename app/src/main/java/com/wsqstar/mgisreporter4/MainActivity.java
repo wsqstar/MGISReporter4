@@ -1,15 +1,12 @@
 package com.wsqstar.mgisreporter4;
 
-import android.Manifest;
-import android.app.Activity;
+
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -413,6 +410,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 Toast.makeText(this, "You clicked LocDemo,前往定位地图", Toast.LENGTH_SHORT).show();
                 Intent intent_loc = new Intent(MainActivity.this, LocationDemo.class);
                 startActivity(intent_loc);
+                break;//每次选择结束都需要break
+            case R.id.Jump2PoiSearchDemo:
+                Toast.makeText(this, "You clicked PoiDemo,前往Poi检索地图", Toast.LENGTH_SHORT).show();
+                Intent intent_poi = new Intent(MainActivity.this, PoiSearchDemo.class);
+                startActivity(intent_poi);
+                break;
 
             default:
         }

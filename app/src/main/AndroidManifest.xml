@@ -59,6 +59,9 @@
 
         </activity>
         <!--<activity android:name=".TitleActivity"></activity>-->
+        <activity android:name=".PoiSearchDemo" >
+
+        </activity>
     </application>
 
 </manifest>
