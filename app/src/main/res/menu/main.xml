@@ -22,4 +22,7 @@
     <item
         android:id="@+id/Jump2PoiSearchDemo"
         android:title="PoiDemo"/>
+    <item
+        android:id="@+id/Jump2MapCtDemo"
+        android:title="MapControl"/>
 </menu>

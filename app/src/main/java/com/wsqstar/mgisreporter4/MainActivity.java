@@ -3,6 +3,7 @@ package com.wsqstar.mgisreporter4;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -24,15 +25,18 @@ import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapPoi;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,10 +45,6 @@ import java.io.InputStream;
 //然后 实时获取定位信息中的经度和纬度
 //最后 启用定位功能标记我的位置
 public class MainActivity extends AppCompatActivity implements SensorEventListener {//MainActivity 最好是继承AppCompatActivity 这样的话，才有状态栏
-
-
-
-
     // 定位相关
     LocationClient mLocClient;
     public MyLocationListenerM myListener = new MyLocationListenerM();//为了区分demo与MainActivity 直接在函数名称后面加上M，表示来自MainActivity
@@ -52,18 +52,178 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     BitmapDescriptor mCurrentMarker;
     private static final int accuracyCircleFillColor = 0xAAFFFF88;
     private static final int accuracyCircleStrokeColor = 0xAA00FF00;
-    private SensorManager mSensorManager;
+    private SensorManager mSensorManager;//传感器相关
     private Double lastX = 0.0;
     private int mCurrentDirection = 0;
     private double mCurrentLat = 0.0;
     private double mCurrentLon = 0.0;
     private float mCurrentAccracy;
 
-
+    /**
+     * MapView 是地图主控件
+     */
     private MapView mMapView;//声明地图组件
     private BaiduMap mBaiduMap;//定义百度地图对象
 
-    ///////////////////////////////////
+//    /**
+//     * 当前地点击点
+//     */
+//    private LatLng currentPt;//当前位置
+//
+//    //控制按钮
+//    private Button saveScreenButton;//保存截图
+//
+//    //判断触控类型
+//    private String touchType;
+//
+//    /**
+//     * 用于显示地图状态的面板
+//     */
+//    BitmapDescriptor bdA = BitmapDescriptorFactory
+//            .fromResource(R.drawable.icon_marka);//双击会出现的按钮
+//
+//    /**
+//     * 对地图事件的消息响应
+//     */
+//    private void initListener() {
+////        mBaiduMap.setOnMapTouchListener(new BaiduMap.OnMapTouchListener() {
+////
+////            @Override
+////            public void onTouch(MotionEvent event) {
+////
+////            }
+////        });
+//
+//
+//        mBaiduMap.setOnMapClickListener(new BaiduMap.OnMapClickListener() {
+//            /**
+//             * 单击地图
+//             */
+//            public void onMapClick(LatLng point) {
+//                touchType = "单击地图";
+//                currentPt = point;
+//                updateMapState();//tips： 可以尝试使用toast返回当前状态
+//            }
+//
+//            /**
+//             * 单击地图中的POI点
+//             */
+//            public boolean onMapPoiClick(MapPoi poi) {
+//                touchType = "单击POI点";
+//                currentPt = poi.getPosition();
+//                updateMapState();
+//                return false;
+//            }
+//        });
+//        mBaiduMap.setOnMapLongClickListener(new BaiduMap.OnMapLongClickListener() {
+//            /**
+//             * 长按地图
+//             */
+//            public void onMapLongClick(LatLng point) {
+//                touchType = "长按";
+//                currentPt = point;
+//                updateMapState();
+//            }
+//        });
+//        mBaiduMap.setOnMapDoubleClickListener(new BaiduMap.OnMapDoubleClickListener() {
+//            /**
+//             * 双击地图
+//             */
+//            public void onMapDoubleClick(LatLng point) {
+//                touchType = "双击";
+//                currentPt = point;
+//                updateMapState();
+//            }
+//        });
+//
+//        /**
+//         * 地图状态发生变化
+//         */
+//        mBaiduMap.setOnMapStatusChangeListener(new BaiduMap.OnMapStatusChangeListener() {
+//            public void onMapStatusChangeStart(MapStatus status) {
+//                updateMapState();
+//            }
+//
+//            @Override
+//            public void onMapStatusChangeStart(MapStatus status, int reason) {
+//
+//            }
+//
+//            public void onMapStatusChangeFinish(MapStatus status) {
+//                updateMapState();
+//            }
+//
+//            public void onMapStatusChange(MapStatus status) {
+//                updateMapState();
+//            }
+//        });
+//
+//        saveScreenButton = (Button) findViewById(R.id.savescreen);
+//        View.OnClickListener onClickListener = new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (view.equals(saveScreenButton)) {
+//                    // 截图，在SnapshotReadyCallback中保存图片到 sd 卡
+//                    mBaiduMap.snapshot(new BaiduMap.SnapshotReadyCallback() {
+//                        public void onSnapshotReady(Bitmap snapshot) {
+//                            File file = new File("/mnt/sdcard/test.png");
+//                            FileOutputStream out;
+//                            try {
+//                                out = new FileOutputStream(file);
+//                                if (snapshot.compress(
+//                                        Bitmap.CompressFormat.PNG, 100, out)) {
+//                                    out.flush();
+//                                    out.close();
+//                                }
+//                                Toast.makeText(MainActivity.this,
+//                                        "屏幕截图成功，图片存在: " + file.toString(),
+//                                        Toast.LENGTH_SHORT).show();
+//                            } catch (FileNotFoundException e) {
+//                                e.printStackTrace();
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    });
+//                    Toast.makeText(MainActivity.this, "正在截取屏幕图片...",
+//                            Toast.LENGTH_SHORT).show();
+//
+//                }
+//                updateMapState();
+//            }
+//
+//        };
+//
+//        saveScreenButton.setOnClickListener(onClickListener);
+//    }
+//
+//        /**
+//         * 更新地图状态显示面板
+//         */
+//    private void updateMapState() {
+////        if (mStateBar == null) {
+////            return;
+////        }
+//        String state = "";
+//        if (currentPt == null) {
+//            state = "点击、长按、双击地图以获取经纬度和地图状态";
+//        } else {
+//            state = String.format(touchType + ",当前经度： %f 当前纬度：%f",
+//                    currentPt.longitude, currentPt.latitude);
+//            MarkerOptions ooA = new MarkerOptions().position(currentPt).icon(bdA);
+//            mBaiduMap.clear();
+//            mBaiduMap.addOverlay(ooA);
+//        }
+//        state += "\n";
+//        MapStatus ms = mBaiduMap.getMapStatus();
+//        state += String.format(
+//                "zoom=%.1f rotate=%d overlook=%d",
+//                ms.zoom, (int) ms.rotate, (int) ms.overlook);
+//        Toast.makeText(this,state,Toast.LENGTH_SHORT).show();
+////        mStateBar.setText(state);
+//
+//    }
+//    ///////////////////////////////////
     //来自个性化地图DEMO//BaseMapDemo
     private boolean mEnableCustomStyle = true;
     private static final int OPEN_ID = 0;
@@ -101,7 +261,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         setContentView(R.layout.activity_main);
 
-        MapView.setMapCustomEnable(true);
+        //开关，设置自定义视图是否可见
+        //MapView.setMapCustomEnable(true);
 
 //        setTitle("标题栏");
 //        showBackwardView(R.string.text_back,true);
@@ -111,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);//获取传感器管理服务//Demo
         mCurrentMode = MyLocationConfiguration.LocationMode.NORMAL;//设置当前的定位模式
 
-        //以下是有关切换定位模式的代码
+        //以下是有关切换定位模式的代码//LocationDemo
         requestLocButton.setText("普通");
         View.OnClickListener btnClickListener = new View.OnClickListener() {
             public void onClick(View v) {
@@ -126,10 +287,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
                         break;
                     case COMPASS:
-                        requestLocButton.setText("普通");
-                        mCurrentMode = MyLocationConfiguration.LocationMode.NORMAL;
+                        requestLocButton.setText("普通");//如果点击现在显示普通
+                        mCurrentMode = MyLocationConfiguration.LocationMode.NORMAL;//那么定位模式转换为普通
                         mBaiduMap.setMyLocationConfiguration(new MyLocationConfiguration(
-                                mCurrentMode, true, mCurrentMarker));
+                                mCurrentMode, true, mCurrentMarker));//使用默认的marker
                         MapStatus.Builder builder1 = new MapStatus.Builder();
                         builder1.overlook(0);
                         mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder1.build()));
@@ -173,25 +334,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         group.setOnCheckedChangeListener(radioButtonListener);
         //
 
-        //这一小段代码更改个性化地图
-
-
-        RadioGroup group_custom_map = (RadioGroup) this.findViewById(R.id.radioGroup2);
-        radioButtonListener2 = new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group_custom_map, int checkedId) {
-                if (checkedId == R.id.default_map) {
-                    MapView.setMapCustomEnable(true);
-                    mBaiduMap.setCustomTrafficColor("#ffbb0101", "#fff33131", "#ffff9e19", "#00000000");
-                    MapStatusUpdate u = MapStatusUpdateFactory.zoomTo(13);
-                    mBaiduMap.animateMapStatus(u);
-                } else if (checkedId == R.id.custom_map) {
-                    MapView.setMapCustomEnable(false);
-
-                }
-            }
-        };
-        group_custom_map.setOnCheckedChangeListener(radioButtonListener2);
+//        //这一小段代码更改个性化地图//但是好像实际上没有被实现功能，也许是调用顺序的问题
+//        RadioGroup group_custom_map = (RadioGroup) this.findViewById(R.id.radioGroup2);
+//        radioButtonListener2 = new RadioGroup.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(RadioGroup group_custom_map, int checkedId) {
+//                if (checkedId == R.id.default_map) {
+//                    MapView.setMapCustomEnable(true);
+//                    mBaiduMap.setCustomTrafficColor("#ffbb0101", "#fff33131", "#ffff9e19", "#00000000");
+//                    MapStatusUpdate u = MapStatusUpdateFactory.zoomTo(13);
+//                    mBaiduMap.animateMapStatus(u);
+//                } else if (checkedId == R.id.custom_map) {
+//                    MapView.setMapCustomEnable(false);
+//                }
+//            }
+//        };
+//        group_custom_map.setOnCheckedChangeListener(radioButtonListener2);
 
 
 
@@ -209,14 +367,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         option.setScanSpan(1000);
         mLocClient.setLocOption(option);
         mLocClient.start();
+//        initListener();
     }
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////        //////////////////////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////////////////////////
-//其实下面已经没有用处了
-        //demo的代码中onCreate(Bundle savedInstanceState ，已经写完了
 
-
+        //其实下面已经没有用处了//demo的代码中onCreate(Bundle savedInstanceState ，已经写完了
 //
 //        //获取系统的LocationManager对象
 //        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -317,7 +471,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 ////        mBaiduMap.addOverlay(option);
 //
 //    }
-        @Override
+
+        @Override//LocationDemo 当传感器改变的时候
         public void onSensorChanged(SensorEvent sensorEvent) {
             double x = sensorEvent.values[SensorManager.DATA_X];
             if (Math.abs(x - lastX) > 1.0) {
@@ -332,7 +487,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
              lastX = x;
         }
 
-        @Override
+        @Override//当定位精度改变的时候
         public void onAccuracyChanged (Sensor sensor,int i){
 
         }
@@ -362,15 +517,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     LatLng ll = new LatLng(location.getLatitude(),
                             location.getLongitude());
                     MapStatus.Builder builder = new MapStatus.Builder();
-                    builder.target(ll).zoom(18.0f);
-                    mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+                    builder.target(ll).zoom(18.0f);//放大等级 18倍
+                    mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));//animate 推动
                 }
             }
 
-            public void onReceivePoi(BDLocation poiLocation) {
+            public void onReceivePoi(BDLocation poiLocation) {//似乎是POI接口
             }
         }
-//
 //        //字符信息
 //
 //    public void locationUpdates(Location location) {//获取指定的查询信息
@@ -423,11 +577,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //        }
 //    }
 
-
-
-
-
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //个性化地图相关代码//BaseMapDemo
     // 设置个性化地图config文件路径
@@ -479,12 +628,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         MapView.setIconCustom(icon_themeId);
     }
-    //个性化地图相关代码结束
+    //个性化地图 相关代码结束
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-//菜单栏目的设置
+    //菜单栏的设置
     @Override
     //首先是使用getMenuInflater（）方法获取到MenuInflater对象
     //然后调用它？的inflate（）方法创建当前活动菜单
@@ -525,7 +674,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 Intent intent_poi = new Intent(MainActivity.this, PoiSearchDemo.class);
                 startActivity(intent_poi);
                 break;
-
+            case R.id.Jump2MapCtDemo:
+                Toast.makeText(this, "You clicked MaPContral,前往控制地图实例", Toast.LENGTH_SHORT).show();
+                Intent intent_control = new Intent(MainActivity.this, MapControlDemo.class);
+                startActivity(intent_control);
+                break;
             default:
         }
         return true;
