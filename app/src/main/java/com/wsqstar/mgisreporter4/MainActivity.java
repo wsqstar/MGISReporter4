@@ -36,7 +36,7 @@ import com.baidu.mapapi.model.LatLng;
 //首先是 布局界面并显示百度地图
 //然后 实时获取定位信息中的经度和纬度
 //最后 启用定位功能标记我的位置
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+public class MainActivity extends AppCompatActivity implements SensorEventListener {//MainActivity 最好是继承AppCompatActivity 这样的话，才有状态栏
 
 
 
