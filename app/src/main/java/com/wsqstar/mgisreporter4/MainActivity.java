@@ -222,11 +222,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         //textView = (TextView) findViewById(R.id.provider);
         SDKInitializer.initialize(getApplicationContext());//初始化地图SDK//放置在setContentView之前//demo里面好像没有？
+        //来自BaseMapDemo 为了设置文件
+        setMapCustomFile(this, PATH);
 
         setContentView(R.layout.activity_main);
 
         //开关，设置自定义视图是否可见
-        //MapView.setMapCustomEnable(true);
+        MapView.setMapCustomEnable(true);
 
 //        setTitle("标题栏");
 //        showBackwardView(R.string.text_back,true);
@@ -297,6 +299,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         };
         group.setOnCheckedChangeListener(radioButtonListener);
 
+                //这一小段代码更改个性化地图//但是好像实际上没有被实现功能，也许是调用顺序的问题
+        RadioGroup group_custom_map = (RadioGroup) this.findViewById(R.id.radioGroup2);
+        radioButtonListener2 = new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group_custom_map, int checkedId) {
+                if (checkedId == R.id.default_map) {
+                    MapView.setMapCustomEnable(true);
+                    mBaiduMap.setCustomTrafficColor("#ffbb0101", "#fff33131", "#ffff9e19", "#00000000");
+                    MapStatusUpdate u = MapStatusUpdateFactory.zoomTo(13);
+                    mBaiduMap.animateMapStatus(u);
+                } else if (checkedId == R.id.custom_map) {
+                    MapView.setMapCustomEnable(false);
+                }
+            }
+        };
+        group_custom_map.setOnCheckedChangeListener(radioButtonListener2);
+
+
         //下面是对于截图功能的实现
         saveScreenButtonM = (Button) findViewById(R.id.savescreenM);
         View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -333,27 +353,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
 
         };
-
         saveScreenButtonM.setOnClickListener(onClickListener);
 
         //
 
-//        //这一小段代码更改个性化地图//但是好像实际上没有被实现功能，也许是调用顺序的问题
-//        RadioGroup group_custom_map = (RadioGroup) this.findViewById(R.id.radioGroup2);
-//        radioButtonListener2 = new RadioGroup.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(RadioGroup group_custom_map, int checkedId) {
-//                if (checkedId == R.id.default_map) {
-//                    MapView.setMapCustomEnable(true);
-//                    mBaiduMap.setCustomTrafficColor("#ffbb0101", "#fff33131", "#ffff9e19", "#00000000");
-//                    MapStatusUpdate u = MapStatusUpdateFactory.zoomTo(13);
-//                    mBaiduMap.animateMapStatus(u);
-//                } else if (checkedId == R.id.custom_map) {
-//                    MapView.setMapCustomEnable(false);
-//                }
-//            }
-//        };
-//        group_custom_map.setOnCheckedChangeListener(radioButtonListener2);
+
 
 
 
