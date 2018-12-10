@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
@@ -43,6 +42,7 @@ import com.baidu.mapapi.search.sug.OnGetSuggestionResultListener;
 import com.baidu.mapapi.search.sug.SuggestionResult;
 import com.baidu.mapapi.search.sug.SuggestionSearch;
 import com.baidu.mapapi.search.sug.SuggestionSearchOption;
+import com.wsqstar.mgisreporter4.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,15 +53,15 @@ import java.util.List;
 public class PoiSearchDemo extends FragmentActivity implements
         OnGetPoiSearchResultListener, OnGetSuggestionResultListener {
 
-    private PoiSearch mPoiSearch = null;
-    private SuggestionSearch mSuggestionSearch = null;
+    private PoiSearch mPoiSearch = null;//POI检索
+    private SuggestionSearch mSuggestionSearch = null;//建议搜索
     private BaiduMap mBaiduMap = null;
     /* 搜索关键字输入窗口 */
     private EditText editCity = null;
     private AutoCompleteTextView keyWorldsView = null;
     private ArrayAdapter<String> sugAdapter = null;
     private int loadIndex = 0;
-
+    /*以下是默认的地理位置信息，以后可以尝试直接获取本地的地理信息*/
     private LatLng center = new LatLng(39.92235, 116.380338);
     private int radius = 1000;
     private LatLng southwest = new LatLng( 39.92235, 116.380338 );
@@ -74,11 +74,11 @@ public class PoiSearchDemo extends FragmentActivity implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poisearch);
-        // 初始化搜索模块，注册搜索事件监听
+        // 初始化 搜索模块 ，注册 搜索事件 监听
         mPoiSearch = PoiSearch.newInstance();
         mPoiSearch.setOnGetPoiSearchResultListener(this);
 
-        // 初始化建议搜索模块，注册建议搜索事件监听
+        // 初始化 建议搜索模块 ，注册 建议搜索事件 监听
         mSuggestionSearch = SuggestionSearch.newInstance();
         mSuggestionSearch.setOnGetSuggestionResultListener(this);
 
@@ -116,16 +116,17 @@ public class PoiSearchDemo extends FragmentActivity implements
 
     }
 
+    //生命周期 暂停
     @Override
     protected void onPause() {
         super.onPause();
     }
-
+    //
     @Override
     protected void onResume() {
         super.onResume();
     }
-
+    //销毁
     @Override
     protected void onDestroy() {
         mPoiSearch.destroy();
@@ -151,7 +152,7 @@ public class PoiSearchDemo extends FragmentActivity implements
     public void searchButtonProcess(View v) {
         searchType = 1;
 
-        String citystr = editCity.getText().toString();
+        String citystr = editCity.getText().toString();//城市码
         String keystr = keyWorldsView.getText().toString();
 
         mPoiSearch.searchInCity((new PoiCitySearchOption())
@@ -195,7 +196,6 @@ public class PoiSearchDemo extends FragmentActivity implements
             .bound(searchBound)
             .keyword(keyWorldsView.getText().toString())
             .scope(1));
-
     }
 
 

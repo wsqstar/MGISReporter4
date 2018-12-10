@@ -70,8 +70,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //     */
 //    private LatLng currentPt;//当前位置
 //
-//    //控制按钮
-//    private Button saveScreenButton;//保存截图
+    //控制按钮
+    private Button saveScreenButtonM;//保存截图
 //
 //    //判断触控类型
 //    private String touchType;
@@ -158,44 +158,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //            }
 //        });
 //
-//        saveScreenButton = (Button) findViewById(R.id.savescreen);
-//        View.OnClickListener onClickListener = new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (view.equals(saveScreenButton)) {
-//                    // 截图，在SnapshotReadyCallback中保存图片到 sd 卡
-//                    mBaiduMap.snapshot(new BaiduMap.SnapshotReadyCallback() {
-//                        public void onSnapshotReady(Bitmap snapshot) {
-//                            File file = new File("/mnt/sdcard/test.png");
-//                            FileOutputStream out;
-//                            try {
-//                                out = new FileOutputStream(file);
-//                                if (snapshot.compress(
-//                                        Bitmap.CompressFormat.PNG, 100, out)) {
-//                                    out.flush();
-//                                    out.close();
-//                                }
-//                                Toast.makeText(MainActivity.this,
-//                                        "屏幕截图成功，图片存在: " + file.toString(),
-//                                        Toast.LENGTH_SHORT).show();
-//                            } catch (FileNotFoundException e) {
-//                                e.printStackTrace();
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    });
-//                    Toast.makeText(MainActivity.this, "正在截取屏幕图片...",
-//                            Toast.LENGTH_SHORT).show();
-//
-//                }
-//                updateMapState();
-//            }
-//
-//        };
-//
-//        saveScreenButton.setOnClickListener(onClickListener);
-//    }
+
+//}
 //
 //        /**
 //         * 更新地图状态显示面板
@@ -332,6 +296,46 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         };
         group.setOnCheckedChangeListener(radioButtonListener);
+
+        //下面是对于截图功能的实现
+        saveScreenButtonM = (Button) findViewById(R.id.savescreenM);
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (view.equals(saveScreenButtonM)) {
+                    // 截图，在SnapshotReadyCallback中保存图片到 sd 卡
+                    mBaiduMap.snapshot(new BaiduMap.SnapshotReadyCallback() {
+                        public void onSnapshotReady(Bitmap snapshot) {
+                            File file = new File("/mnt/sdcard/test.png");
+                            FileOutputStream out;
+                            try {
+                                out = new FileOutputStream(file);
+                                if (snapshot.compress(
+                                        Bitmap.CompressFormat.PNG, 100, out)) {
+                                    out.flush();
+                                    out.close();
+                                }
+                                Toast.makeText(MainActivity.this,
+                                        "屏幕截图成功，图片存在: " + file.toString(),
+                                        Toast.LENGTH_SHORT).show();
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    Toast.makeText(MainActivity.this, "正在截取屏幕图片...",
+                            Toast.LENGTH_SHORT).show();
+
+                }
+//                updateMapState();
+            }
+
+        };
+
+        saveScreenButtonM.setOnClickListener(onClickListener);
+
         //
 
 //        //这一小段代码更改个性化地图//但是好像实际上没有被实现功能，也许是调用顺序的问题
@@ -367,7 +371,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         option.setScanSpan(1000);
         mLocClient.setLocOption(option);
         mLocClient.start();
-//        initListener();
+//      initListener();
     }
 
         //其实下面已经没有用处了//demo的代码中onCreate(Bundle savedInstanceState ，已经写完了
