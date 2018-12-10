@@ -1,9 +1,5 @@
 package com.wsqstar.mgisreporter4;
 
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
@@ -11,27 +7,16 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioGroup;
 import android.widget.Toast;
-
-import com.baidu.location.BDLocation;
-import com.baidu.location.BDLocationListener;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.CircleOptions;
 import com.baidu.mapapi.map.GroundOverlayOptions;
-import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
-import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MarkerOptions;
-import com.baidu.mapapi.map.MyLocationConfiguration;
-import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Stroke;
 import com.baidu.mapapi.map.SupportMapFragment;
@@ -57,7 +42,6 @@ import com.baidu.mapapi.search.sug.OnGetSuggestionResultListener;
 import com.baidu.mapapi.search.sug.SuggestionResult;
 import com.baidu.mapapi.search.sug.SuggestionSearch;
 import com.baidu.mapapi.search.sug.SuggestionSearchOption;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,43 +49,18 @@ import java.util.List;
  * 演示poi搜索功能
  */
 public class PoiSearchDemo extends FragmentActivity implements
-        OnGetPoiSearchResultListener, OnGetSuggestionResultListener,SensorEventListener {
+        OnGetPoiSearchResultListener, OnGetSuggestionResultListener {
 
-
-    // 定位相关
-    LocationClient mLocClient;
-    public MyLocationListenner myListener = new MyLocationListenner();
-    private MyLocationConfiguration.LocationMode mCurrentMode;
-    BitmapDescriptor mCurrentMarker;
-    private static final int accuracyCircleFillColor = 0xAAFFFF88;
-    private static final int accuracyCircleStrokeColor = 0xAA00FF00;
-    private SensorManager mSensorManager;
-    private Double lastX = 0.0;
-    private int mCurrentDirection = 0;
-    private double mCurrentLat = 0.0;
-    private double mCurrentLon = 0.0;
-    private float mCurrentAccracy;
-
-    MapView mMapView;
-    // UI相关
-    RadioGroup.OnCheckedChangeListener radioButtonListener;
-    Button requestLocButton;
-    boolean isFirstLoc = true; // 是否首次定位
-    private MyLocationData locData;
-    private float direction;
-
-
-
-
-    private PoiSearch mPoiSearch = null;//POI检索
-    private SuggestionSearch mSuggestionSearch = null;//建议搜索
+    private PoiSearch mPoiSearch = null;
+    private SuggestionSearch mSuggestionSearch = null;
     private BaiduMap mBaiduMap = null;
     /* 搜索关键字输入窗口 */
     private EditText editCity = null;
     private AutoCompleteTextView keyWorldsView = null;
     private ArrayAdapter<String> sugAdapter = null;
     private int loadIndex = 0;
-    /*以下是默认的地理位置信息，以后可以尝试直接获取本地的地理信息*/
+
+
     private LatLng center = new LatLng(30.524789, 114.406074);
     private int radius = 1000;
     private LatLng southwest = new LatLng( 30.524789, 114.406074 );
@@ -114,11 +73,11 @@ public class PoiSearchDemo extends FragmentActivity implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poisearch);
-        // 初始化 搜索模块 ，注册 搜索事件 监听
+        // 初始化搜索模块，注册搜索事件监听
         mPoiSearch = PoiSearch.newInstance();
         mPoiSearch.setOnGetPoiSearchResultListener(this);
 
-        // 初始化 建议搜索模块 ，注册 建议搜索事件 监听
+        // 初始化建议搜索模块，注册建议搜索事件监听
         mSuggestionSearch = SuggestionSearch.newInstance();
         mSuggestionSearch.setOnGetSuggestionResultListener(this);
 
@@ -149,178 +108,26 @@ public class PoiSearchDemo extends FragmentActivity implements
 
                 /* 使用建议搜索服务获取建议列表，结果在onSuggestionResult()中更新 */
                 mSuggestionSearch.requestSuggestion((new SuggestionSearchOption())
-                    .keyword(cs.toString())
-                    .city(editCity.getText().toString()));
+                        .keyword(cs.toString())
+                        .city(editCity.getText().toString()));
             }
         });
 
-        requestLocButton = (Button) findViewById(R.id.button1_changeLocModeM_poi);
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);//获取传感器管理服务
-        mCurrentMode = MyLocationConfiguration.LocationMode.NORMAL;
-        requestLocButton.setText("普通");
-        View.OnClickListener btnClickListener = new View.OnClickListener() {
-            public void onClick(View v) {
-                switch (mCurrentMode) {
-                    case NORMAL:
-                        requestLocButton.setText("跟随");
-                        mCurrentMode = MyLocationConfiguration.LocationMode.FOLLOWING;
-                        mBaiduMap.setMyLocationConfiguration(new MyLocationConfiguration(
-                                mCurrentMode, true, mCurrentMarker));
-                        MapStatus.Builder builder = new MapStatus.Builder();
-                        builder.overlook(0);
-                        mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
-                        break;
-                    case COMPASS:
-                        requestLocButton.setText("普通");
-                        mCurrentMode = MyLocationConfiguration.LocationMode.NORMAL;
-                        mBaiduMap.setMyLocationConfiguration(new MyLocationConfiguration(
-                                mCurrentMode, true, mCurrentMarker));
-                        MapStatus.Builder builder1 = new MapStatus.Builder();
-                        builder1.overlook(0);
-                        mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder1.build()));
-                        break;
-                    case FOLLOWING:
-                        requestLocButton.setText("罗盘");
-                        mCurrentMode = MyLocationConfiguration.LocationMode.COMPASS;
-                        mBaiduMap.setMyLocationConfiguration(new MyLocationConfiguration(
-                                mCurrentMode, true, mCurrentMarker));
-                        break;
-                    default:
-                        break;
-                }
-            }
-        };
-        requestLocButton.setOnClickListener(btnClickListener);
-
-        RadioGroup group = (RadioGroup) this.findViewById(R.id.radioGroup_poi);
-        radioButtonListener = new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.defaulticon_poi) {
-                    // 传入null则，恢复默认图标
-                    mCurrentMarker = null;
-                    mBaiduMap
-                            .setMyLocationConfigeration(new MyLocationConfiguration(
-                                    mCurrentMode, true, null));
-                }
-                if (checkedId == R.id.customicon_poi) {
-                    // 修改为自定义marker
-                    mCurrentMarker = BitmapDescriptorFactory
-                            .fromResource(R.drawable.ic_icon_geo);
-                    mBaiduMap.setMyLocationConfiguration(new MyLocationConfiguration(
-                            mCurrentMode, true, mCurrentMarker,
-                            accuracyCircleFillColor, accuracyCircleStrokeColor));
-                }
-            }
-        };
-        group.setOnCheckedChangeListener(radioButtonListener);
-
-        // 地图初始化
-//        mMapView = (MapView) findViewById(R.id.bmapView);
-//        mBaiduMap = mMapView.getMap();
-        // 开启定位图层
-        mBaiduMap.setMyLocationEnabled(true);
-        // 定位初始化
-        mLocClient = new LocationClient(this);
-        mLocClient.registerLocationListener(myListener);
-        LocationClientOption option = new LocationClientOption();
-        option.setOpenGps(true); // 打开gps
-        option.setCoorType("bd09ll"); // 设置坐标类型
-        option.setScanSpan(1000);
-        mLocClient.setLocOption(option);
-        mLocClient.start();
-
     }
 
-     @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {
-        double x = sensorEvent.values[SensorManager.DATA_X];
-        if (Math.abs(x - lastX) > 1.0) {
-            mCurrentDirection = (int) x;
-            locData = new MyLocationData.Builder()
-                    .accuracy(mCurrentAccracy)
-                    // 此处设置开发者获取到的方向信息，顺时针0-360
-                    .direction(mCurrentDirection).latitude(mCurrentLat)
-                    .longitude(mCurrentLon).build();
-            mBaiduMap.setMyLocationData(locData);
-        }
-        lastX = x;
-
-    }
-
-     @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
-
-    }
-
-    /**
-     * 定位SDK监听函数
-     */
-    public class MyLocationListenner implements BDLocationListener {
-
-        @Override
-        public void onReceiveLocation(BDLocation location) {
-            // map view 销毁后不在处理新接收的位置
-            if (location == null || mMapView == null) {
-                return;
-            }
-            mCurrentLat = location.getLatitude();
-            mCurrentLon = location.getLongitude();
-            mCurrentAccracy = location.getRadius();
-            locData = new MyLocationData.Builder()
-                    .accuracy(location.getRadius())
-                    // 此处设置开发者获取到的方向信息，顺时针0-360
-                    .direction(mCurrentDirection).latitude(location.getLatitude())
-                    .longitude(location.getLongitude()).build();
-            mBaiduMap.setMyLocationData(locData);
-            if (isFirstLoc) {
-                isFirstLoc = false;
-                LatLng ll = new LatLng(location.getLatitude(),
-                        location.getLongitude());
-                MapStatus.Builder builder = new MapStatus.Builder();
-                builder.target(ll).zoom(18.0f);
-                mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
-            }
-        }
-
-        public void onReceivePoi(BDLocation poiLocation) {
-        }
-    }
-
-    //生命周期 暂停
     @Override
     protected void onPause() {
         super.onPause();
     }
-    //
+
     @Override
     protected void onResume() {
-        mMapView.onResume();
         super.onResume();
-        //为系统的方向传感器注册监听器
-        mSensorManager.registerListener((SensorEventListener) this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
-                SensorManager.SENSOR_DELAY_UI);
     }
 
-    @Override
-    protected void onStop() {
-        //取消注册传感器监听
-        mSensorManager.unregisterListener((SensorEventListener) this);
-        super.onStop();
-    }
-
-    //销毁
     @Override
     protected void onDestroy() {
-
-        // 退出时销毁定位
-        mLocClient.stop();
-        // 关闭定位图层
-        mBaiduMap.setMyLocationEnabled(false);
-        mMapView.onDestroy();
-        mMapView = null;
         mPoiSearch.destroy();
-
         mSuggestionSearch.destroy();
         super.onDestroy();
     }
@@ -343,14 +150,14 @@ public class PoiSearchDemo extends FragmentActivity implements
     public void searchButtonProcess(View v) {
         searchType = 1;
 
-        String citystr = editCity.getText().toString();//城市码
+        String citystr = editCity.getText().toString();
         String keystr = keyWorldsView.getText().toString();
 
         mPoiSearch.searchInCity((new PoiCitySearchOption())
-            .city(citystr)
-            .keyword(keystr)
-            .pageNum(loadIndex)
-            .scope(1));
+                .city(citystr)
+                .keyword(keystr)
+                .pageNum(loadIndex)
+                .scope(1));
     }
 
     /**
@@ -361,12 +168,12 @@ public class PoiSearchDemo extends FragmentActivity implements
     public void  searchNearbyProcess(View v) {
         searchType = 2;
         PoiNearbySearchOption nearbySearchOption = new PoiNearbySearchOption()
-            .keyword(keyWorldsView.getText().toString())
-            .sortType(PoiSortType.distance_from_near_to_far)
-            .location(center)
-            .radius(radius)
-            .pageNum(loadIndex)
-            .scope(1);
+                .keyword(keyWorldsView.getText().toString())
+                .sortType(PoiSortType.distance_from_near_to_far)
+                .location(center)
+                .radius(radius)
+                .pageNum(loadIndex)
+                .scope(1);
 
         mPoiSearch.searchNearby(nearbySearchOption);
     }
@@ -384,9 +191,9 @@ public class PoiSearchDemo extends FragmentActivity implements
     public void searchBoundProcess(View v) {
         searchType = 3;
         mPoiSearch.searchInBound(new PoiBoundSearchOption()
-            .bound(searchBound)
-            .keyword(keyWorldsView.getText().toString())
-            .scope(1));
+                .bound(searchBound)
+                .keyword(keyWorldsView.getText().toString())
+                .scope(1));
     }
 
 
@@ -447,8 +254,8 @@ public class PoiSearchDemo extends FragmentActivity implements
             Toast.makeText(PoiSearchDemo.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(PoiSearchDemo.this,
-                result.getName() + ": " + result.getAddress(),
-                Toast.LENGTH_SHORT).show();
+                    result.getName() + ": " + result.getAddress(),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -467,8 +274,8 @@ public class PoiSearchDemo extends FragmentActivity implements
                 PoiDetailInfo poiDetailInfo = poiDetailInfoList.get(i);
                 if (null != poiDetailInfo) {
                     Toast.makeText(PoiSearchDemo.this,
-                        poiDetailInfo.getName() + ": " + poiDetailInfo.getAddress(),
-                        Toast.LENGTH_SHORT).show();
+                            poiDetailInfo.getName() + ": " + poiDetailInfo.getAddress(),
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -498,7 +305,7 @@ public class PoiSearchDemo extends FragmentActivity implements
         }
 
         sugAdapter = new ArrayAdapter<>(PoiSearchDemo.this, android.R.layout.simple_dropdown_item_1line,
-            suggest);
+                suggest);
         keyWorldsView.setAdapter(sugAdapter);
         sugAdapter.notifyDataSetChanged();
     }
@@ -525,15 +332,15 @@ public class PoiSearchDemo extends FragmentActivity implements
      * @param center    周边检索中心点坐标
      * @param radius    周边检索半径，单位米
      */
-    public void showNearbyArea(LatLng center, int radius) {
+    public void showNearbyArea( LatLng center, int radius) {
         BitmapDescriptor centerBitmap = BitmapDescriptorFactory.fromResource(R.drawable.icon_geo);
         MarkerOptions ooMarker = new MarkerOptions().position(center).icon(centerBitmap);
         mBaiduMap.addOverlay(ooMarker);
 
         OverlayOptions ooCircle = new CircleOptions().fillColor( 0xCCCCCC00 )
-            .center(center)
-            .stroke(new Stroke(5, 0xFFFF00FF ))
-            .radius(radius);
+                .center(center)
+                .stroke(new Stroke(5, 0xFFFF00FF ))
+                .radius(radius);
 
         mBaiduMap.addOverlay(ooCircle);
     }
@@ -547,10 +354,10 @@ public class PoiSearchDemo extends FragmentActivity implements
         BitmapDescriptor bdGround = BitmapDescriptorFactory.fromResource(R.drawable.ground_overlay);
 
         OverlayOptions ooGround = new GroundOverlayOptions()
-            .positionFromBounds(bounds)
-            .image(bdGround)
-            .transparency(0.8f)
-            .zIndex(1);
+                .positionFromBounds(bounds)
+                .image(bdGround)
+                .transparency(0.8f)
+                .zIndex(1);
 
         mBaiduMap.addOverlay(ooGround);
 
