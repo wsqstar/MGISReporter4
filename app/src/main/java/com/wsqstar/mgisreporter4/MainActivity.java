@@ -1,22 +1,33 @@
 package com.wsqstar.mgisreporter4;
-
-
-import android.app.Fragment;
+//目前的功能
+/*
+* 定位
+* 罗盘、普通、跟随
+* 切换定位
+* POI检索（但是不能返回本地位置）
+* 现在的bug有
+* POI功能融合不完善 位置信息传输失误
+* MapControl 保持闪退
+* */
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import com.baidu.location.BDLocation;
@@ -27,12 +38,10 @@ import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
-import com.baidu.mapapi.map.MapPoi;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
@@ -42,6 +51,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 //首先是 布局界面并显示百度地图
 //然后 实时获取定位信息中的经度和纬度
@@ -60,6 +70,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private double mCurrentLat = 0.0;
     private double mCurrentLon = 0.0;
     private float mCurrentAccracy;
+    private final int SDK_PERMISSION_REQUEST = 127;
+    private ListView FunctionList;
+    private String permissionInfo;
 
     /**
      * MapView 是地图主控件
@@ -228,6 +241,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setMapCustomFile(this, PATH);
 
         setContentView(R.layout.activity_main);
+        // after andrioid m,must request Permiision on runtime
+        getPersimmions();
 
         //开关，设置自定义视图是否可见
         MapView.setMapCustomEnable(true);
@@ -379,6 +394,62 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mLocClient.start();
 //      initListener();
     }
+
+    @TargetApi(25)
+    private void getPersimmions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            ArrayList<String> permissions = new ArrayList<String>();
+            /***
+             * 定位权限为必须权限，用户如果禁止，则每次进入都会申请
+             */
+            // 定位精确位置
+            if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+            }
+            if(checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+            }
+			/*
+			 * 读写权限和电话状态权限非必要权限(建议授予)只会申请一次，用户同意或者禁止，只会弹一次
+			 */
+            // 读写权限
+            if (addPermission(permissions, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                permissionInfo += "Manifest.permission.WRITE_EXTERNAL_STORAGE Deny \n";
+            }
+            // 读取电话状态权限
+            if (addPermission(permissions, Manifest.permission.READ_PHONE_STATE)) {
+                permissionInfo += "Manifest.permission.READ_PHONE_STATE Deny \n";
+            }
+
+            if (permissions.size() > 0) {
+                requestPermissions(permissions.toArray(new String[permissions.size()]), SDK_PERMISSION_REQUEST);
+            }
+        }
+    }
+
+    @TargetApi(25)
+    private boolean addPermission(ArrayList<String> permissionsList, String permission) {
+        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) { // 如果应用没有获得对应权限,则添加到列表中,准备批量申请
+            if (shouldShowRequestPermissionRationale(permission)){
+                return true;
+            }else{
+                permissionsList.add(permission);
+                return false;
+            }
+
+        }else{
+            return true;
+        }
+    }
+
+    @TargetApi(25)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        // TODO Auto-generated method stub
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+    }
+
 
         //其实下面已经没有用处了//demo的代码中onCreate(Bundle savedInstanceState ，已经写完了
 //
@@ -688,6 +759,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 Toast.makeText(this, "You clicked MaPContral,前往控制地图实例", Toast.LENGTH_SHORT).show();
                 Intent intent_control = new Intent(MainActivity.this, MapControlDemo.class);
                 startActivity(intent_control);
+                break;
+            case R.id.Jump2Loc:
+                Toast.makeText(this, "You clicked LocData,前往地理位置", Toast.LENGTH_SHORT).show();
+                Intent intent_location = new Intent(MainActivity.this, LocationActivity.class);
+                startActivity(intent_location);
                 break;
             default:
         }

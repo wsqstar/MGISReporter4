@@ -25,4 +25,7 @@
     <item
         android:id="@+id/Jump2MapCtDemo"
         android:title="MapControl"/>
+    <item
+        android:id="@+id/Jump2Loc"
+        android:title="LocData"/>
 </menu>
