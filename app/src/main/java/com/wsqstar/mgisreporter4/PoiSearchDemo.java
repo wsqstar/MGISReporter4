@@ -62,10 +62,10 @@ public class PoiSearchDemo extends FragmentActivity implements
     private ArrayAdapter<String> sugAdapter = null;
     private int loadIndex = 0;
     /*以下是默认的地理位置信息，以后可以尝试直接获取本地的地理信息*/
-    private LatLng center = new LatLng(39.92235, 116.380338);
+    private LatLng center = new LatLng(30.524789, 114.406074);
     private int radius = 1000;
-    private LatLng southwest = new LatLng( 39.92235, 116.380338 );
-    private LatLng northeast = new LatLng( 39.947246, 116.414977);
+    private LatLng southwest = new LatLng( 30.524789, 114.406074 );
+    private LatLng northeast = new LatLng( 30.515610, 114.419220);
     private LatLngBounds searchBound = new LatLngBounds.Builder().include(southwest).include(northeast).build();
 
     private int searchType = 0;  // 搜索的类型，在显示时区分
@@ -335,7 +335,7 @@ public class PoiSearchDemo extends FragmentActivity implements
      * @param radius    周边检索半径，单位米
      */
     public void showNearbyArea(LatLng center, int radius) {
-        BitmapDescriptor centerBitmap = BitmapDescriptorFactory.fromResource(R.drawable.ic_icon_geo);
+        BitmapDescriptor centerBitmap = BitmapDescriptorFactory.fromResource(R.drawable.icon_geo);
         MarkerOptions ooMarker = new MarkerOptions().position(center).icon(centerBitmap);
         mBaiduMap.addOverlay(ooMarker);
 

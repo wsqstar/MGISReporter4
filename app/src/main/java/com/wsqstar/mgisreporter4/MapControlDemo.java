@@ -3,7 +3,6 @@ package com.wsqstar.mgisreporter4;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,17 +33,18 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+
+
 /**
  * 演示地图缩放，旋转，视角控制，单击，双击，长按，截图的事件响应
  */
-public class MapControlDemo extends AppCompatActivity {
+public class MapControlDemo extends Activity {
 
     /**
      * MapView 是地图主控件
      */
     private MapView mMapView;
     private BaiduMap mBaiduMap;
-
 
     /**
      * 当前地点击点
