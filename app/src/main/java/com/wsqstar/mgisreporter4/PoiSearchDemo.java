@@ -1,5 +1,7 @@
 package com.wsqstar.mgisreporter4;
 
+import android.content.Intent;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
@@ -9,6 +11,9 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
@@ -17,6 +22,8 @@ import com.baidu.mapapi.map.GroundOverlayOptions;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MarkerOptions;
+import com.baidu.mapapi.map.MyLocationConfiguration;
+import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Stroke;
 import com.baidu.mapapi.map.SupportMapFragment;
@@ -60,11 +67,28 @@ public class PoiSearchDemo extends FragmentActivity implements
     private ArrayAdapter<String> sugAdapter = null;
     private int loadIndex = 0;
 
+//    //wsq
+//    // 定位相关
+//    LocationClient mLocClient;
+//    public LocationDemo.MyLocationListenner myListener = new LocationDemo.MyLocationListenner();
+//    private MyLocationConfiguration.LocationMode mCurrentMode;
+//    BitmapDescriptor mCurrentMarker;
+//    private static final int accuracyCircleFillColor = 0xAAFFFF88;
+//    private static final int accuracyCircleStrokeColor = 0xAA00FF00;
+//    private SensorManager mSensorManager;
+//    private Double lastX = 0.0;
+//    private int mCurrentDirection = 0;
+//    private double mCurrentLat = 0.0;
+//    private double mCurrentLon = 0.0;
+//    private float mCurrentAccracy;
+
 
     private LatLng center = new LatLng(30.524789, 114.406074);
     private int radius = 1000;
     private LatLng southwest = new LatLng( 30.524789, 114.406074 );
     private LatLng northeast = new LatLng( 30.515610, 114.419220);
+//    private LatLng now_location = new LatLng();
+//    private MyLocationData locData_poi;//wsq
     private LatLngBounds searchBound = new LatLngBounds.Builder().include(southwest).include(northeast).build();
 
     private int searchType = 0;  // 搜索的类型，在显示时区分
@@ -73,6 +97,19 @@ public class PoiSearchDemo extends FragmentActivity implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poisearch);
+//        Intent intent = getIntent();
+//        double mLat = intent.getDoubleExtra("mLocate_lat",mCurrentLat);
+//        double mLon = intent.getDoubleExtra("mLocate_lon",mCurrentLon);
+//        private LatLng now_location = new LatLng("mLocate_lat","")
+        Bundle bundle_lat = getIntent().getExtras();
+        Bundle bundle_lon = getIntent().getExtras();
+        double mLat = bundle_lat.getDouble("mLocate_lat");
+        double mLon = bundle_lon.getDouble("mLocate_lng");
+        LatLng mlocate = new LatLng(mLat,mLon);
+        center = mlocate;
+
+
+
         // 初始化搜索模块，注册搜索事件监听
         mPoiSearch = PoiSearch.newInstance();
         mPoiSearch.setOnGetPoiSearchResultListener(this);
@@ -86,7 +123,20 @@ public class PoiSearchDemo extends FragmentActivity implements
         sugAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line);
         keyWorldsView.setAdapter(sugAdapter);
         keyWorldsView.setThreshold(1);
+        //地图初始化
         mBaiduMap = ((SupportMapFragment) (getSupportFragmentManager().findFragmentById(R.id.map))).getBaiduMap();
+
+//        // 开启定位图层wsq
+//        mBaiduMap.setMyLocationEnabled(true);
+//        // 定位初始化
+//        mLocClient = new LocationClient(this);
+//        mLocClient.registerLocationListener(myListener);
+//        LocationClientOption option = new LocationClientOption();
+//        option.setOpenGps(true); // 打开gps
+//        option.setCoorType("bd09ll"); // 设置坐标类型
+//        option.setScanSpan(1000);
+//        mLocClient.setLocOption(option);
+//        mLocClient.start();
 
         /* 当输入关键字变化时，动态更新建议列表 */
         keyWorldsView.addTextChangedListener(new TextWatcher() {
@@ -114,6 +164,7 @@ public class PoiSearchDemo extends FragmentActivity implements
         });
 
     }
+//    private LatLng now_location = new LatLng(mLat,mLon);
 
     @Override
     protected void onPause() {

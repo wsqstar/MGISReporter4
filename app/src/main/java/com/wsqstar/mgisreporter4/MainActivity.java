@@ -753,6 +753,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             case R.id.Jump2PoiSearchDemo:
                 Toast.makeText(this, "You clicked PoiDemo,前往Poi检索地图", Toast.LENGTH_SHORT).show();
                 Intent intent_poi = new Intent(MainActivity.this, PoiSearchDemo.class);
+//                intent_poi.putExtra("mLocate_lat",mCurrentLat);
+//                intent_poi.putExtra("mLocate_lng",mCurrentLon);
+                Bundle bundle_lat = new Bundle();
+                Bundle bundle_lon = new Bundle();
+                bundle_lat.putDouble("mLocate_lat",mCurrentLat);
+                bundle_lon.putDouble("mLocate_lng",mCurrentLon);
+                intent_poi.putExtras(bundle_lat);
+                intent_poi.putExtras(bundle_lon);
+
                 startActivity(intent_poi);
                 break;
             case R.id.Jump2MapCtDemo:
