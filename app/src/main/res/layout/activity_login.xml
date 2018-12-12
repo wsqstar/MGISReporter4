@@ -73,8 +73,30 @@
                 android:text="@string/action_sign_in"
                 android:textStyle="bold" />
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/warm_attention"/>
+                <ImageButton
+                    android:id="@+id/github_img"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/github"/>
+                <ImageButton
+                    android:id="@+id/collect_img"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/collect"/>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
 </LinearLayout>
 
 

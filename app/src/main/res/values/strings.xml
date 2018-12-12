@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:https="http://schemas.android.com/tools">
     <string name="app_name">MGISReporter4</string>
     <string name="title_activity_login">Sign in</string>
 
@@ -50,6 +50,24 @@
 		4、具体描述：细节描述，可以给出问题发生的频率或者APP名称，sdk版本等，也可以加上附件如日志，贴图等\n
         </string>
     <string name="qa_callback_mail">反馈邮箱:loc-bugs@mgis.top</string>
+    <string name="warm_attention">
+        测试版本V2.1\n
+                目前完善的功能有：\n
+                截图\n
+                切换地图图标\n
+                切换地图风格\n
+                切换卫星地图\n
+                增加交通地图\n
+                增加热力地图\n
+                定位地图基础演示\n
+                POI检索\n
+                测试中功能：\n
+                地图控制\n
+                本地文本信息控制\n
+        github地址：<a href="https://github.com/wsqstar/MGISReporter4">wsqstar</a>\n
+        网页版地址（预留）: \n
+        <a href="https://m.mgis.top">m.mgis.top</a> \n
+    </string>
 
 </resources>
 
