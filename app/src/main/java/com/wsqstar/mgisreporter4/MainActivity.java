@@ -765,7 +765,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 startActivity(intent_poi);
                 break;
             case R.id.Jump2MapCtDemo:
-                Toast.makeText(this, "You clicked MaPContral,前往控制地图实例", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "You clicked MapContral,前往控制地图实例", Toast.LENGTH_SHORT).show();
                 Intent intent_control = new Intent(MainActivity.this, MapControlDemo.class);
                 startActivity(intent_control);
                 break;

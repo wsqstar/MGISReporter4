@@ -86,6 +86,8 @@ public class PoiSearchDemo extends FragmentActivity implements
     private LatLng center = new LatLng(30.524789, 114.406074);
     private int radius = 1000;
     private LatLng southwest = new LatLng( 30.524789, 114.406074 );
+//    private LatLng southwest = center;
+//
     private LatLng northeast = new LatLng( 30.515610, 114.419220);
 //    private LatLng now_location = new LatLng();
 //    private MyLocationData locData_poi;//wsq
@@ -106,7 +108,13 @@ public class PoiSearchDemo extends FragmentActivity implements
         double mLat = bundle_lat.getDouble("mLocate_lat");
         double mLon = bundle_lon.getDouble("mLocate_lng");
         LatLng mlocate = new LatLng(mLat,mLon);
+//        LatLng mlocate_new = new LatLng(mLat-0.1,mLon+0.1);
         center = mlocate;
+//        southwest = center;
+//        northeast = mlocate_new;
+//        double mLat_new = mLat - 0.01;
+//        double mLon_new = mLon + 0.013;
+//        LatLng northeast = new LatLng(mLat_new,mLon_new);
 
 
 
@@ -162,9 +170,9 @@ public class PoiSearchDemo extends FragmentActivity implements
                         .city(editCity.getText().toString()));
             }
         });
-
     }
 //    private LatLng now_location = new LatLng(mLat,mLon);
+
 
     @Override
     protected void onPause() {

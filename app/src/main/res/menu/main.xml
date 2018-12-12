@@ -18,14 +18,14 @@
         <!--android:title="POI search"/>-->
     <item
         android:id="@+id/Jump2LocDemo"
-        android:title="LocDemo"/>
+        android:title="Loc"/>
     <item
         android:id="@+id/Jump2PoiSearchDemo"
-        android:title="PoiDemo"/>
+        android:title="PoiSearch"/>
     <item
         android:id="@+id/Jump2MapCtDemo"
-        android:title="MapControl"/>
+        android:title="MapControl（测试中）"/>
     <item
         android:id="@+id/Jump2Loc"
-        android:title="LocData"/>
+        android:title="LocData（测试中）"/>
 </menu>
