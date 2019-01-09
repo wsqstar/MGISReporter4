@@ -10,4 +10,4 @@ finished the base location function.2018 1101
 目前拥有的功能：
   * 定位以及定位模式的切换
   * 地图以及热力图、卫星图、交通图的显示
-  * LocDemo的展示，代码来自Baidu
+  * LocDemo的展示，代码来自Baidu，修改了部分代码
