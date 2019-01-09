@@ -52,6 +52,7 @@
     <string name="qa_callback_mail">反馈邮箱:loc-bugs@mgis.top</string>
     <string name="warm_attention">
         测试版本V2.1\n
+        打开之后若是没有显示地图，建议检查权限然后重启应用！\n
                 目前完善的功能有：\n
                 截图\n
                 切换地图图标\n

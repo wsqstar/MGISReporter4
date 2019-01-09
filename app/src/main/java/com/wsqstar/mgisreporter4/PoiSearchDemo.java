@@ -53,7 +53,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 演示poi搜索功能
+ * poi搜索功能
  */
 public class PoiSearchDemo extends FragmentActivity implements
         OnGetPoiSearchResultListener, OnGetSuggestionResultListener {

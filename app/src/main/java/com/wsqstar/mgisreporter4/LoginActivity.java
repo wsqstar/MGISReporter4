@@ -11,6 +11,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import cn.bmob.v3.Bmob;
+
 public class LoginActivity extends AppCompatActivity {
 
     private EditText email_login_text;//1 定义两个变量
@@ -19,6 +21,9 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //第一：默认初始化
+        Bmob.initialize(this, "dd0680ad199e73186bbbf16f301bcc8a");
+        // 注:自v3.5.2开始，数据sdk内部缝合了统计sdk，开发者无需额外集成，传渠道参数即可，不传默认没开启数据统计功能
         setContentView(R.layout.activity_login);
 
         Button button_login = (Button)findViewById(R.id.email_sign_in_button);

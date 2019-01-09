@@ -16,6 +16,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    //为了解决部分第三方库重复打包了META-INF的问题
+    packagingOptions{
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+    lintOptions {
+        abortOnError false
+    }
+    //在app的build.gradle文件中添加compile依赖文件：//使用了 自动导入 的配置
+    useLibrary 'org.apache.http.legacy'
     /*
 * 这段代码的意思是强制改变所有引用com.android.support 版本为25.3.0。
 * */
@@ -41,4 +51,26 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation files('libs/BaiduLBS_Android.jar')
+//    //在app的build.gradle文件中添加compile依赖文件：//使用了 自动导入 的配置
+//    implementation 'cn.bmob.android:bmob-sdk:3.6.8-rc7'
+//    implementation "io.reactivex.rxjava2:rxjava:2.2.2"
+//    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+//    implementation 'com.squareup.okio:okio:2.1.0'
+//    implementation 'com.google.code.gson:gson:2.8.5'
+//    implementation 'com.squareup.okhttp3:okhttp:3.12.0'
+    // LeanCloud 基础包
+    compile ('cn.leancloud.android:avoscloud-sdk:4.7.8')
+
+    // 推送与即时通讯需要的包
+    compile ('cn.leancloud.android:avoscloud-push:4.7.8@aar'){transitive = true}
+
+    // Android 混合推送需要的包
+    compile ('cn.leancloud.android:avoscloud-mixpush:4.7.8@aar'){transitive = true}
+
+    // LeanCloud 用户反馈包
+    compile ('cn.leancloud.android:avoscloud-feedback:4.7.8@aar')
+
+    // LeanCloud 应用内搜索包
+    compile ('cn.leancloud.android:avoscloud-search:4.7.8@aar')
+
 }
